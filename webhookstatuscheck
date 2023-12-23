@@ -1,0 +1,26 @@
+import time
+import json
+import requests
+from discord.ext import tasks
+
+@bot.event
+async def on_ready():
+# you can put this to a onready you alredy have make sure to havce  st = time.time() below it like mine
+    st = time.time()
+
+    @tasks.loop(minutes=5)
+    async def send_json():
+        uptime_seconds = int(time.time() - st)
+        uptime_str = f"{uptime_seconds // 3600}h {uptime_seconds % 3600 // 60}m"
+
+        json_data = {
+            "bot_ping": round(bot.latency * 1000),
+            "uptime": uptime_str
+        }
+
+        online = ''  # put your webhook 
+
+        headers = {'Content-Type': 'application/json'}
+        requests.post(online, data=json.dumps(json_data), headers=headers)
+
+    send_json.start()
